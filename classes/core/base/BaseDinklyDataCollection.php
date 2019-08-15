@@ -155,6 +155,39 @@ abstract class BaseDinklyDataCollection extends DinklyDataModel
 	}
 
 	/**
+	 * Retrieve first object matching array of passed property/value pairs. If not found, return null.
+	 *
+	 * @param PDO object $db Optional PDO object for recycling existing connections
+	 *
+	 * @param array $properties Array of class property names and values to filter on
+	 *
+	 * @param array $order Array of class property names to order results by
+	 *
+	 * @param string $direction Order 'asc' or 'desc' - Only does something if an array
+	 *						was passed for $order parameter.
+	 *
+	 * @param int $offset Create offset for results. Default is 0
+	 *
+	 * @param boolean $coalesce If there is more than one result and $coalesce is true,
+	 *						return the first result. Otherwise, return null. Default is true.
+	 *
+	 * @return Object/Null Return first object or null depending on results.
+	 */
+	public static function getOne($db = null, $properties, $order = array(), $direction = 'asc', $offset = 0, $coalesce = true)
+	{
+			$results = static::getWith($db, $properties, $order, $direction, array(1, $offset));
+			if (count($results) == 1 || (count($results) >= 1 && $coalesce))
+			{
+				return $results[0];
+			}
+			else
+			{
+				return null;
+			}
+		}
+	}
+
+	/**
 	 * Retrieve all objects of specified object given a specific query
 	 *
 	 * @param object $peer_object Object from which to get class of collection objects
